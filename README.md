@@ -3,14 +3,14 @@
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2508.02292-b31b1b.svg)](https://arxiv.org/abs/2508.02292)
-[![Website](https://img.shields.io/badge/Website-FinWorld-blue.svg)](https://dvampire.github.io/FinWorld/)
+[![Website](https://img.shields.io/badge/Website-FinWorld-blue.svg)](https://trademaster-ntu.github.io/FinWorld/)
 
 > ⚠️ **Preview Version Notice**: This is currently a preview version of FinWorld. Some code components are still being updated and may not be fully available in this repository. We appreciate your patience and look forward to providing the complete implementation soon. Thank you for your understanding!
 
 **FinWorld** is a comprehensive, all-in-one open-source platform that provides end-to-end support for the entire financial AI workflow, from data acquisition to experimentation and deployment. Built on the foundation of unified AI paradigms, heterogeneous data integration, and advanced agent automation, FinWorld addresses the critical limitations of existing financial AI platforms.
 
 > **Paper**: [FinWorld: An All-in-One Open-Source Platform for End-to-End Financial AI Research and Deployment](https://arxiv.org/abs/2508.02292) (Arxiv)
-> **Website**: [FinWorld Project Website](https://dvampire.github.io/FinWorld/) - Interactive demo and detailed results
+> **Website**: [FinWorld Project Website](https://trademaster-ntu.github.io/FinWorld/) - Interactive demo and detailed results
 
 ![FinWorld Architecture](docs/assets/finworld.png)
 *Figure 1: Overview of FinWorld's comprehensive architecture and workflow*
@@ -337,8 +337,8 @@ We thank the following organizations and tools for their contributions:
 
 ### Support
 For questions, issues, or contributions:
-- Open an issue on [GitHub](https://github.com/DVampire/FinWorld)
-- Visit our [Project Website](https://dvampire.github.io/FinWorld/) for interactive demo and detailed results
+- Open an issue on [GitHub](https://github.com/trademaster-ntu/FinWorld)
+- Visit our [Project Website](https://trademaster-ntu.github.io/FinWorld/) for interactive demo and detailed results
 - Check the documentation in the `docs/` directory
 - Review example scripts in the `examples/` directory
 
@@ -364,7 +364,7 @@ If you find FinWorld useful in your research, please cite our paper:
 
 Visit our interactive project website for detailed results, visualizations, and comprehensive documentation:
 
-**[https://dvampire.github.io/FinWorld/](https://dvampire.github.io/FinWorld/)**
+**[https://trademaster-ntu.github.io/FinWorld/](https://trademaster-ntu.github.io/FinWorld/)**
 
 The website features:
 - Interactive architecture overview
