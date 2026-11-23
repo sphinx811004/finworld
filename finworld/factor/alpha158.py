@@ -28,7 +28,7 @@ class Alpha158:
         self.names.extend([
             'kmid', 'kmid2', 'klen', 'kup', 'kup2', 'klow', 'klow2', 'ksft', 'ksft2',
         ])
-        for window in windows or windows:
+        for window in self.windows:
             self.names.extend([
                 f'roc_{window}', f'ma_{window}', f'std_{window}', f'beta_{window}',
                 f'max_{window}', f'min_{window}', f'qtlu_{window}', f'qtld_{window}',

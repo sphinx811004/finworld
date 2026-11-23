@@ -43,19 +43,19 @@ class PPOTradingTrainer():
 
         env_name = self.train_environment.__class__.__name__
 
-        self.train_environments = gym.vector.AsyncVectorEnv([
+        self.train_environments = gym.vector.SyncVectorEnv([
             make_env(env_name, env_params=dict(env=deepcopy(self.train_environment),
                                                    transition_shape=config.transition_shape, seed=config.seed + i)) for
             i in range(config.num_envs)
         ])
 
-        self.valid_environments = gym.vector.AsyncVectorEnv([
+        self.valid_environments = gym.vector.SyncVectorEnv([
             make_env(env_name, env_params=dict(env=deepcopy(self.valid_environment),
                                                    transition_shape=config.transition_shape, seed=config.seed + i)) for
             i in range(1)
         ])
 
-        self.test_environments = gym.vector.AsyncVectorEnv([
+        self.test_environments = gym.vector.SyncVectorEnv([
             make_env(env_name, env_params=dict(env=deepcopy(self.test_environment),
                                                    transition_shape=config.transition_shape, seed=config.seed + i)) for
             i in range(1)
@@ -75,6 +75,9 @@ class PPOTradingTrainer():
         self.global_step = 0
         self.check_index = 0
         self.save_index = 0
+
+        if hasattr(self.config, "checkpoint_path") and self.config.checkpoint_path:
+            os.makedirs(self.config.checkpoint_path, exist_ok=True)
 
         self.storage = self.set_storage()
 

@@ -14,28 +14,55 @@ import requests
 import urllib.parse
 
 import asyncio
-from browser_use import Agent
-from browser_use.agent.views import ActionModel, ActionResult
-from browser_use.browser.context import BrowserContext
-from browser_use import BrowserConfig, Browser
-from browser_use.controller.service import Controller as BrowserUseController
-from browser_use.controller.registry.service import Registry
-from browser_use.controller.views import (
-    ClickElementAction,
-    CloseTabAction,
-    DoneAction,
-    DragDropAction,
-    GoToUrlAction,
-    InputTextAction,
-    NoParamsAction,
-    OpenTabAction,
-    Position,
-    ScrollAction,
-    SearchGoogleAction,
-    SendKeysAction,
-    SwitchTabAction,
-)
-from browser_use.utils import time_execution_sync
+try:
+    from browser_use import Agent
+    from browser_use.agent.views import ActionModel, ActionResult
+    from browser_use.browser.context import BrowserContext
+    from browser_use import BrowserConfig, Browser
+    from browser_use.controller.service import Controller as BrowserUseController
+    from browser_use.controller.registry.service import Registry
+    from browser_use.controller.views import (
+        ClickElementAction,
+        CloseTabAction,
+        DoneAction,
+        DragDropAction,
+        GoToUrlAction,
+        InputTextAction,
+        NoParamsAction,
+        OpenTabAction,
+        Position,
+        ScrollAction,
+        SearchGoogleAction,
+        SendKeysAction,
+        SwitchTabAction,
+    )
+    from browser_use.utils import time_execution_sync
+except ImportError:
+    Agent = None
+    ActionModel = None
+    ActionResult = None
+    BrowserContext = None
+    BrowserConfig = None
+    Browser = None
+    BrowserUseController = object
+    Registry = None
+    ClickElementAction = None
+    CloseTabAction = None
+    DoneAction = None
+    DragDropAction = None
+    GoToUrlAction = None
+    InputTextAction = None
+    NoParamsAction = None
+    OpenTabAction = None
+    Position = None
+    ScrollAction = None
+    SearchGoogleAction = None
+    SendKeysAction = None
+    SwitchTabAction = None
+    def time_execution_sync(*args, **kwargs):
+        def decorator(fn):
+            return fn
+        return decorator
 
 from finworld.log import logger
 

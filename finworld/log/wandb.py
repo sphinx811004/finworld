@@ -27,8 +27,11 @@ class WandbLogger(metaclass=Singleton):
         dir = config['logging_dir']
 
         if self.is_main_process:
-            wandb.login(key=os.environ["WANDB_API_KEY"])
-            wandb.init(project=project, name=name, dir=dir)
+            if os.environ.get("WANDB_API_KEY"):
+                wandb.login(key=os.environ["WANDB_API_KEY"])
+                wandb.init(project=project, name=name, dir=dir)
+            else:
+                self.is_main_process = False
 
     def log(self, metric: Dict[str, Any]):
         if not self.is_main_process:

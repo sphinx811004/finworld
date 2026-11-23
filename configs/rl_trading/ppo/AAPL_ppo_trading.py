@@ -55,7 +55,7 @@ num_steps = 512
 policy_num_minibatches = 128
 value_num_minibatches = 16
 gradient_checkpointing_steps = 32
-total_steps = int(1e8)
+total_steps = int(2e5)
 check_steps = int(1e4)
 save_steps = int(1e5)
 seed = 1024
@@ -149,31 +149,10 @@ dataset = dict(
     symbol=symbol,
     data_path="datasets/exp",
     enabled_data_configs = [
-        {
-            "asset_name": "exp",
-            "source": "fmp",
-            "data_type": "price",
-            "level": "1day",
-        },
-        {
-            "asset_name": "exp",
-            "source": "fmp",
-            "data_type": "feature",
-            "level": "1day",
-        },
-        {
-            "asset_name": "exp",
-            "source": "fmp",
-            "data_type": "news",
-            "level": "1day",
-        },
-        {
-            "asset_name": "exp",
-            "source": "alpaca",
-            "data_type": "news",
-            "level": "1day",
-        }
+        {"asset_name": "AAPL", "source": "yfinance", "data_type": "price",   "level": "1day"},
+        {"asset_name": "AAPL", "source": "yfinance", "data_type": "feature", "level": "1day"},
     ],
+        
     if_norm=if_norm,
     if_use_future=if_use_future,
     if_use_temporal=if_use_temporal,

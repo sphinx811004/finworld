@@ -42,19 +42,19 @@ class PPOPortfolioTrainer():
 
         env_name = self.train_environment.__class__.__name__
 
-        self.train_environments = gym.vector.AsyncVectorEnv([
+        self.train_environments = gym.vector.SyncVectorEnv([
             make_env(env_name, env_params=dict(env=deepcopy(self.train_environment),
                                                    transition_shape=config.transition_shape, seed=config.seed + i)) for
             i in range(config.num_envs)
         ])
 
-        self.valid_environments = gym.vector.AsyncVectorEnv([
+        self.valid_environments = gym.vector.SyncVectorEnv([
             make_env(env_name, env_params=dict(env=deepcopy(self.valid_environment),
                                                    transition_shape=config.transition_shape, seed=config.seed + i)) for
             i in range(1)
         ])
 
-        self.test_environments = gym.vector.AsyncVectorEnv([
+        self.test_environments = gym.vector.SyncVectorEnv([
             make_env(env_name, env_params=dict(env=deepcopy(self.test_environment),
                                                    transition_shape=config.transition_shape, seed=config.seed + i)) for
             i in range(1)
@@ -74,6 +74,9 @@ class PPOPortfolioTrainer():
         self.global_step = 0
         self.check_index = 0
         self.save_index = 0
+
+        if hasattr(self.config, "checkpoint_path") and self.config.checkpoint_path:
+            os.makedirs(self.config.checkpoint_path, exist_ok=True)
 
         self.storage = self.set_storage()
 
@@ -595,5 +598,100 @@ class PPOPortfolioTrainer():
         logger.info(f"| {log_string} - {metrics_string}")
 
         # Save the trading records
+        records_df = portfolio_records.to_dataframe()
+        records_df.to_json(os.path.join(self.config.exp_path, f"{mode}_records.jsonl"), orient="records", lines=True)
+
+    def test(self):
+
+        mode = "test"
+
+        portfolio_records = PortfolioRecords()
+
+        # start the test
+        state, info = self.test_environments.reset()
+        portfolio_records.add(
+            dict(
+                timestamp=info["timestamp"][0],
+                price=info["price"][0],
+                cash=info["cash"][0],
+                position=info["position"][0],
+                value=info["value"][0],
+            ),
+        )
+
+        next_obs = TensorDict({key: torch.Tensor(value) for key, value in state.items()}, batch_size=1).to(self.device)
+
+        while True:
+            with torch.no_grad():
+                input_tensor = TensorDict(
+                    {
+                        "dense": next_obs["features"],
+                        "sparse": next_obs["times"].to(torch.int32),
+                        "cashes": next_obs["policy_portfolio_cashes"],
+                        "positions": next_obs["policy_portfolio_positions"].to(torch.float32),
+                        "actions": next_obs["policy_portfolio_actions"].to(torch.float32),
+                        "rets": next_obs["policy_portfolio_rets"],
+                    }, batch_size=next_obs.batch_size
+                ).to(next_obs.device)
+
+                action = self.agent.get_action(input_tensor)
+
+            next_obs, reward, done, truncted, info = self.test_environments.step(action.cpu().numpy())
+
+            portfolio_records.add(
+                dict(
+                    action=info["action"][0],
+                    ret=info["ret"][0],
+                    total_profit=info["total_profit"][0],
+                    timestamp=info["timestamp"][0],
+                    price=info["price"][0],
+                    cash=info["cash"][0],
+                    position=info["position"][0],
+                    value=info["value"][0],
+                ),
+            )
+
+            next_obs = TensorDict({key: torch.Tensor(value) for key, value in next_obs.items()}, batch_size=1).to(self.device)
+
+            if "final_info" in info:
+                for info_item in info["final_info"]:
+                    if info_item is not None:
+                        logger.info(f"| total_return={info_item['total_return']:.4f}, total_profit = {info_item['total_profit']:.4f}")
+
+                        metrics = {
+                            f"{mode}/total_return": info_item["total_return"],
+                            f"{mode}/total_profit": info_item["total_profit"],
+                        }
+
+                        logger.log_metric(metrics)
+                break
+
+        portfolio_records.add(
+            dict(
+                action=info["action"][0],
+                ret=info["ret"][0],
+                total_profit=info["total_profit"][0],
+            )
+        )
+
+        rets = portfolio_records.data["ret"]
+        rets = np.array(rets, dtype=np.float32)
+
+        metrics = {}
+        for metric_name, metric_fn in self.metrics.items():
+            arguments = dict(
+                ret=rets,
+            )
+            metric_item = metric_fn(**arguments)
+            metrics[metric_name] = metric_item
+
+        metrics = {f"{mode}/{k}": v for k, v in metrics.items()}
+
+        logger.log_metric(metrics)
+
+        log_string = f"{mode.capitalize()} Metrics:\n"
+        metrics_string = ", ".join([f"{k}: {v:.4f}" for k, v in metrics.items()])
+        logger.info(f"| {log_string} - {metrics_string}")
+
         records_df = portfolio_records.to_dataframe()
         records_df.to_json(os.path.join(self.config.exp_path, f"{mode}_records.jsonl"), orient="records", lines=True)

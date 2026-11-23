@@ -4,7 +4,10 @@ import atexit
 import signal
 from dotenv import load_dotenv
 load_dotenv(verbose=True)
-from browser_use import Agent
+try:
+    from browser_use import Agent
+except ImportError:
+    Agent = None
 
 from finworld.tools import AsyncTool, ToolResult
 from finworld.tools.browser import Controller

@@ -5,10 +5,17 @@ import asyncio
 import base64
 import json
 from typing import Generic, Optional, TypeVar, Any
-from browser_use import Browser as BrowserUseBrowser
-from browser_use import BrowserConfig
-from browser_use.browser.context import BrowserContext, BrowserContextConfig
-from browser_use.dom.service import DomService
+try:
+    from browser_use import Browser as BrowserUseBrowser
+    from browser_use import BrowserConfig
+    from browser_use.browser.context import BrowserContext, BrowserContextConfig
+    from browser_use.dom.service import DomService
+except ImportError:
+    BrowserUseBrowser = None
+    BrowserConfig = None
+    BrowserContext = None
+    BrowserContextConfig = None
+    DomService = None
 from pydantic import field_validator
 from pydantic_core.core_schema import ValidationInfo
 

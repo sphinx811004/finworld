@@ -2,8 +2,12 @@ import numpy as np
 from typing import List, Union, Dict, Any
 import pandas as pd
 from sklearn.multioutput import MultiOutputRegressor
-import lightgbm as lgb
-from lightgbm import LGBMRegressor
+try:
+    import lightgbm as lgb
+    from lightgbm import LGBMRegressor
+except ImportError:
+    lgb = None
+    LGBMRegressor = None
 
 try:
     from typing import Literal
